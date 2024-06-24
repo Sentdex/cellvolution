@@ -1,6 +1,6 @@
 # cellvolution
 
-Evolutionary simulation of competing cell races (colored cells) on a grid of resouces (visualized black to white). 
+Evolutionary simulation of competing cell races (colored cells) on a grid of resources (visualized black to white). 
 
 Cells move, consume resources, replicate, and evolve. Visualized in real-time.
 
