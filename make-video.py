@@ -1,39 +1,37 @@
-import cv2
 import os
-import glob
-from natsort import natsorted
+import subprocess
 
-def create_video(input_folder, output_file, fps=30):
-    # Get all png files in the folder
-    images = glob.glob(f"{input_folder}/*.png")
-    
-    # Sort the images naturally (1, 2, ..., 10, 11 instead of 1, 10, 11, 2, ...)
-    images = natsorted(images)
-    
-    # Read the first image to get the frame size
-    frame = cv2.imread(images[0])
-    height, width, layers = frame.shape
+def create_video_ffmpeg(input_folder, output_file, fps=30, crf=23):
+    # Ensure the input folder exists
+    if not os.path.exists(input_folder):
+        raise ValueError(f"Input folder does not exist: {input_folder}")
 
-    # Define the codec and create VideoWriter object
-    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-    video = cv2.VideoWriter(output_file, fourcc, fps, (width, height))
+    # Construct the FFmpeg command
+    ffmpeg_cmd = [
+        'ffmpeg',
+        '-framerate', str(fps),
+        '-pattern_type', 'glob',
+        '-i', f'{input_folder}/*.png',
+        '-c:v', 'libx264',
+        '-preset', 'slow',
+        '-crf', str(crf),
+        '-pix_fmt', 'yuv420p',
+        output_file
+    ]
 
-    # Write each frame to the video
-    for image in images:
-        frame = cv2.imread(image)
-        video.write(frame)
+    # Run the FFmpeg command
+    try:
+        subprocess.run(ffmpeg_cmd, check=True)
+        print(f"Video created successfully: {output_file}")
+    except subprocess.CalledProcessError as e:
+        print(f"Error creating video: {e}")
 
-    # Release the VideoWriter
-    video.release()
 
-    print(f"Video created successfully: {output_file}")
+simulation = "1719264027"
 
-# Example usage
-
-simulation = "1719178954"
 simulation_dir = f"simulations/{simulation}"
 output_video_dir = "simvids"
 os.makedirs(output_video_dir, exist_ok=True)
 
 output_video = f"{output_video_dir}/{simulation}.mp4"
-create_video(simulation_dir, output_video, fps=30)
+create_video_ffmpeg(simulation_dir, output_video, fps=60, crf=23)
