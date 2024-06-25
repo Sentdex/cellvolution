@@ -6,3 +6,6 @@ Cells move, consume resources, replicate, and evolve. Visualized in real-time.
 
 Can also save frames from the simulation.
 
+![Alt text](https://github.com/Sentdex/cellvolution/blob/main/assets/cellvolution4.gif)
+
+
