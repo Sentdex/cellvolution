@@ -199,10 +199,13 @@ class Visualization:
         self.simulation = simulation
         plt.ion()  # Turn on interactive mode
         plt.style.use('dark_background')
-        self.fig = plt.figure(figsize=(12, 12))  # Square figure
-        self.gs = self.fig.add_gridspec(2, 2)
-        self.ax1 = self.fig.add_subplot(self.gs[0, :])  # Top row, full width
-        self.ax2 = self.fig.add_subplot(self.gs[1, :])  # Bottom row, full width
+        self.fig = plt.figure(figsize=(14, 14))  # Square figure
+        
+        # Modify the gridspec to allocate 80% height to the top graph
+        self.gs = self.fig.add_gridspec(5, 1)  # 5 rows, 1 column
+        self.ax1 = self.fig.add_subplot(self.gs[:4, 0])  # Top 4 rows (80%)
+        self.ax2 = self.fig.add_subplot(self.gs[4, 0])   # Bottom row (20%)
+        
         self.population_history = [[] for _ in range(simulation.n_races)]
         self.steps = []
         
@@ -242,11 +245,15 @@ class Visualization:
                       for i, color in enumerate(self.race_colors)]
         self.ax2.set_xlabel('Steps')
         self.ax2.set_ylabel('Population')
-        self.legend = self.ax2.legend(loc='upper left')
+        self.legend = self.ax2.legend(loc='upper left', fontsize='small')
 
         # Set background color for both subplots
         self.ax1.set_facecolor('#1A1A1A')
         self.ax2.set_facecolor('#1A1A1A')
+
+        # Remove x-axis labels from the top plot to save space
+        self.ax1.set_xticks([])
+        self.ax1.set_yticks([])
 
         self.fig.tight_layout()
 
@@ -303,7 +310,8 @@ class Visualization:
         plt.ioff()
         plt.show()
 
-# Example usage remains the same
-sim = Simulation(40, 30, 5, initial_density=0.1)  # 40x30 grid with 5 races, 20% initial population
+
+#sim = Simulation(800, 600, 10, initial_density=0.05)  # for the very patient among us.
+sim = Simulation(40, 30, 5, initial_density=0.1)  # for the rest of you
 vis = Visualization(sim)
 vis.run()
